@@ -59,8 +59,7 @@ func TestGetDictionary(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			fsys := fstest.MapFS{}
-
+			server := 
 			for idx := range tc.fileMock.name {
 				name := tc.fileMock.name[idx]
 				data := tc.fileMock.data[idx]
