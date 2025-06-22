@@ -57,7 +57,6 @@ func main() {
 
 	dictionary := repository.GetDictionary(
 		ctx,
-		meta,
 		client,
 		cfg.Preset,
 	)

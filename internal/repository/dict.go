@@ -12,12 +12,16 @@ import (
 	"github.com/fatih/color"
 )
 
+var (
+	originalRepositoryMeta = &entity.Meta{
+		Owner: "antfu",
+		Name:  "case-police",
+	}
+)
+
 // GetDictionary returns word-to-word mapping dictionary from the original case-police repository
-func GetDictionary(ctx context.Context, meta *entity.Meta, client internal.GithubClient, files []string) map[string]string {
+func GetDictionary(ctx context.Context, client internal.GithubClient, files []string) map[string]string {
 	allDictionary := make(map[string]string)
-
-	baseUrl := "https://raw.githubusercontent.com/antfu/case-police/refs/heads/main/packages/case-police/dict"
-
 
 	wg := &sync.WaitGroup{}
 	wg.Add(len(files))
@@ -28,10 +32,10 @@ func GetDictionary(ctx context.Context, meta *entity.Meta, client internal.Githu
 	for _, filename := range files {
 		go func(filename string) {
 			defer wg.Done()
-			fileUrl := fmt.Sprintf("%s/%s.json", baseUrl, filename)
+			fileUrl := fmt.Sprintf("packages/case-police/dict/%s.json", filename)
 			errStr := fmt.Errorf("failed to get contents of %s.json", filename)
 
-			rawContent, err := client.GetRepositoryContents(ctx, meta, fileUrl)
+			rawContent, err := client.GetRepositoryContents(ctx, originalRepositoryMeta, fileUrl)
 			if (err != nil) {
 				errCh <- errStr
 				return
@@ -61,6 +65,7 @@ func GetDictionary(ctx context.Context, meta *entity.Meta, client internal.Githu
 		}
 	}
 
+	// Failing to get a dictionyar is OK.
 	for failure := range errCh {
 		red := color.New(color.FgRed)
 		red.Println(failure.Error())

@@ -66,7 +66,10 @@ func (cl *githubClient) GetRepositoryContents(
 	path string,
 ) (string, error) {
 	content, _, _, err := cl.client.Repositories.GetContents(ctx, meta.Owner, meta.Name, path, nil)
+	if (err != nil) {
+		return "", err
+	}
 
-	return *content.Content, err
+	return content.GetContent()
 }
 
