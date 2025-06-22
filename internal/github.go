@@ -12,6 +12,7 @@ import (
 type GithubClient interface {
 	GetIssue(context.Context, *entity.Meta, int) (*github.Issue, error)
 	EditIssue(context.Context, *entity.Meta, int, *entity.IssueData) error
+	GetRepositoryContents(context.Context, *entity.Meta, string) (string, error)
 }
 
 type githubClient struct {
@@ -58,3 +59,14 @@ func (cl *githubClient) EditIssue(
 
 	return err
 }
+
+func (cl *githubClient) GetRepositoryContents(
+	ctx context.Context,
+	meta *entity.Meta,
+	path string,
+) (string, error) {
+	content, _, _, err := cl.client.Repositories.GetContents(ctx, meta.Owner, meta.Name, path, nil)
+
+	return *content.Content, err
+}
+
