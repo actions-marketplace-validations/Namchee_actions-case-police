@@ -1,6 +1,6 @@
 module github.com/Namchee/actions-case-police
 
-go 1.17
+go 1.24.4
 
 require (
 	github.com/fatih/color v1.13.0

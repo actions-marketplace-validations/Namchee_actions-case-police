@@ -10,7 +10,7 @@ You can integrate `actions-case-police` to your existing GitHub actions workflow
 
 Below is the example of using `actions-case-police` job in your action workflow.
 
-```
+```yaml
 on:
   pull_request:
   issues:
@@ -42,11 +42,11 @@ You can customize this actions with these following options (fill it on `with` s
 
 | **Name**       | **Required?** | **Default Value** | **Description** |
 | -------------- | ------------- | ----------------- | --------------- |
-| `access_token` | `true`        | `-` | [GitHub access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) to interact with the GitHub API. It is recommended to store this token with [GitHub Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets).
-| `fix`          | `false`        | `true`            | Determines if possible case fixes should be applied automatically. If set to `false`, `actions-case-police` will only log possible fixes in the action log.
-| `preset`       | `false`        | ``["abbreviates", "brands", "general", "products", "softwares"]`` | Dictionary names to be used when validating word cases. By default, it will use all default dictionary. Comma-separated
-| `exclude`      | `false`        | `""` | Words to be whitelisted on case police. Comma-separated
-| `dictionary`   | `false`        | `{}` | Stringified JSON map that represents custom entiries for dictionary that will be used on case police. 
+| `access_token` | `true`        | `-` | [GitHub access token](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token) to interact with the GitHub API. It is recommended to store this token with [GitHub Secrets](https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets). |
+| `fix`          | `false`        | `true`            | Determines if possible case fixes should be applied automatically. If set to `false`, `actions-case-police` will only log possible fixes in the action log. |
+| `preset`       | `false`        | ``["abbreviates", "brands", "general", "products", "softwares"]`` | Dictionary names to be used when validating word cases. By default, it will use all default dictionary. Comma-separated. |
+| `exclude`      | `false`        | `""` | Words to be whitelisted on case police. Comma-separated. |
+| `dictionary`   | `false`        | `{}` | Stringified JSON map that represents custom entiries for dictionary that will be used on case police. |
 
 ## Special Thanks
 
