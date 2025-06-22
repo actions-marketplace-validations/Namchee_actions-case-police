@@ -8,9 +8,9 @@ inputs:
   fix:
     description: "Determines if possible case fixes should be applied automatically"
     required: false
-    default: true
+    default: "true"
   preset:
-    description: "Dictionary names to be used when validating word cases"
+    description: "Dictionary names to be used when validating word cases. Available on https://github.com/antfu/case-police/tree/main/packages/case-police/dict. Comma-separated"
     required: false
     default: ""
   exclude:

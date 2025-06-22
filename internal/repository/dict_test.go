@@ -1,47 +1,54 @@
 package repository
 
 import (
+	"context"
+	"errors"
 	"testing"
-	"testing/fstest"
 
+	"github.com/Namchee/actions-case-police/internal"
+	"github.com/Namchee/actions-case-police/internal/entity"
+	"github.com/google/go-github/v43/github"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetDictionary(t *testing.T) {
-	type fileMock struct {
-		name []string
-		data []string
+type githubClientMock struct {}
+
+func (c *githubClientMock) GetIssue(ctx context.Context, meta *entity.Meta, number int) (*github.Issue, error) { return nil, nil }
+func (c *githubClientMock) EditIssue(ctx context.Context, meta *entity.Meta, number int, issue *entity.IssueData) error { return nil }
+func (c *githubClientMock) GetRepositoryContents(ctx context.Context, meta *entity.Meta, path string) (string, error) {
+	mappings := map[string]string{
+		"packages/case-police/dict/foo.json": `{
+			"vscode": "VS Code"
+		}`,
+		"packages/case-police/dict/bar.json": `{
+			"wifi": "Wi-Fi"
+		}`,
 	}
+
+	if (mappings[path] != "") {
+		return mappings[path], nil
+	} else {
+		return "", errors.New("Failed to get contents of " + path)
+	}
+}
+
+func TestGetDictionary(t *testing.T) {
 	tests := []struct {
 		name     string
-		fileMock fileMock
+		files  	[]string
+		clientMock internal.GithubClient
 		want     map[string]string
 	}{
 		{
 			name: "should parse single dictionary",
-			fileMock: fileMock{
-				name: []string{"foo.json"},
-				data: []string{`{
-					"vscode": "VS Code"
-				}`},
-			},
+			files: []string{"foo"},
 			want: map[string]string{
 				"vscode": "VS Code",
 			},
 		},
 		{
 			name: "should combine dictionaries",
-			fileMock: fileMock{
-				name: []string{"foo.json", "bar.json"},
-				data: []string{
-					`{
-						"vscode": "VS Code"
-					}`,
-					`{
-						"wifi": "Wi-Fi"
-					}`,
-				},
-			},
+			files: []string{"foo", "bar"},
 			want: map[string]string{
 				"vscode": "VS Code",
 				"wifi":   "Wi-Fi",
@@ -49,28 +56,16 @@ func TestGetDictionary(t *testing.T) {
 		},
 		{
 			name: "should return empty dictionary on error",
-			fileMock: fileMock{
-				name: []string{"foo.json"},
-				data: []string{"lorem ipsum"},
-			},
+			files: []string{"baz"},
 			want: make(map[string]string),
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			fsys := fstest.MapFS{}
+			client := &githubClientMock{}
 
-			for idx := range tc.fileMock.name {
-				name := tc.fileMock.name[idx]
-				data := tc.fileMock.data[idx]
-
-				fsys[name] = &fstest.MapFile{
-					Data: []byte(data),
-				}
-			}
-
-			got := GetDictionary(fsys, tc.fileMock.name)
+			got := GetDictionary(context.TODO(), client, tc.files)
 
 			assert.Equal(t, tc.want, got)
 		})

@@ -27,7 +27,7 @@ func main() {
 	cfg, err := entity.ReadConfiguration()
 	if err != nil {
 		logger.Fatalln(
-			fmt.Errorf("Failed to read action configuration: %w", err),
+			fmt.Errorf("failed to read action configuration: %w", err),
 		)
 	}
 
@@ -36,13 +36,13 @@ func main() {
 	)
 	if err != nil {
 		logger.Fatalln(
-			fmt.Errorf("Failed to read metadata: %w", err),
+			fmt.Errorf("failed to read metadata: %w", err),
 		)
 	}
 	event, err := utils.GetEventNumber(os.DirFS("/"))
 	if err != nil {
 		logger.Fatalln(
-			fmt.Errorf("Failed to read repository event: %w", err),
+			fmt.Errorf("failed to read repository event: %w", err),
 		)
 	}
 
@@ -51,13 +51,13 @@ func main() {
 	issue, err := client.GetIssue(ctx, meta, event)
 	if err != nil {
 		logger.Fatalln(
-			fmt.Errorf("Failed to get issue data: %w", err),
+			fmt.Errorf("failed to get issue data: %w", err),
 		)
 	}
 
-	actionPath := utils.ReadEnvString("GITHUB_ACTION_PATH")
 	dictionary := repository.GetDictionary(
-		os.DirFS(fmt.Sprintf("%s/%s", actionPath, "dict")),
+		ctx,
+		client,
 		cfg.Preset,
 	)
 
@@ -73,7 +73,7 @@ func main() {
 
 		if err != nil {
 			log.Fatalln(
-				fmt.Errorf("Failed to edit issue: %w", err),
+				fmt.Errorf("failed to edit issue: %w", err),
 			)
 		}
 	}
